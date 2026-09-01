@@ -1,0 +1,27 @@
+OPUS ELEC - CONSIGNATION ÉLECTRIQUE v1.0
+
+Créée à partir de l'attestation type OPUS ELEC fournie.
+
+Fonctions :
+- chargé de travaux ;
+- habilitations ;
+- travaux / installation / adresse ;
+- chargé de consignation ;
+- périmètre consigné ;
+- séparation / condamnation / signalisation ;
+- vérifications Oui / Non ;
+- fin de travail / délai de restitution urgence ;
+- photos facultatives ;
+- double signature ;
+- Mes dossiers ;
+- fichier source modifiable .opusconsignation ;
+- Aperçu PDF ;
+- Partage PDF.
+
+IMPORTANT :
+Cette application est un outil de saisie et de génération documentaire.
+Elle ne remplace pas les compétences, habilitations, procédures et responsabilités nécessaires à la consignation électrique.
+
+DEPLOIEMENT GITHUB :
+Créer un dépôt, par exemple OPUS_CONSIGNATION.
+Envoyer tous les fichiers de ce ZIP à la racine, puis activer GitHub Pages sur main /(root).
