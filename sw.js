@@ -1,4 +1,4 @@
-const CACHE='opus-consignation-v1-3-network-first';
+const CACHE='opus-consignation-v1-4-pdf-compact';
 const ASSETS=[
   './manifest.webmanifest',
   './icon-192.png',

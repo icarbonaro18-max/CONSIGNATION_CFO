@@ -1,20 +1,14 @@
-OPUS ELEC - CONSIGNATION ÉLECTRIQUE v1.3 - CORRECTION CACHE TABLETTE
+OPUS ELEC - CONSIGNATION ÉLECTRIQUE v1.4 - MISE EN PAGE PDF COMPACTE
 
-Pourquoi la tablette affichait encore l'ancienne version :
-- le raccourci Chrome ouvrait l'URL racine ;
-- l'ancien service worker pouvait renvoyer l'ancien index.html depuis son cache.
+CORRECTIONS PDF :
+- suppression du chevauchement avec le pied de page ;
+- bloc « Périmètre consigné » fortement réduit ;
+- moins d'espace réservé aux descriptions ;
+- sources d'alimentation compactées ;
+- étapes de consignation réduites à 10 mm par ligne ;
+- VAT présentée sur deux colonnes ;
+- page 1 réservée à la consignation et aux contrôles ;
+- page 2 réservée aux délais, avertissement, observations et signatures ;
+- signatures légèrement réduites pour conserver une marge nette avant le pied de page.
 
-Correction :
-- start_url versionnée ;
-- navigation en mode NETWORK FIRST ;
-- à chaque ouverture, l'application tente d'abord de récupérer la dernière version GitHub ;
-- si le réseau est absent, elle utilise la dernière copie disponible hors ligne ;
-- les dossiers locaux IndexedDB ne sont pas supprimés.
-
-APRÈS MISE À JOUR GITHUB :
-1. Remplacer tous les fichiers par ceux de ce ZIP.
-2. Attendre le déploiement GitHub Pages.
-3. Ouvrir dans Chrome l'URL de l'application avec ?app=consignation-v13.
-4. Vérifier la mention v1.3 dans le sous-titre.
-5. Supprimer l'ancien raccourci de l'écran d'accueil.
-6. Depuis la page v1.3, refaire Ajouter à l'écran d'accueil / Installer.
+Le formulaire de saisie et les contrôles de la v1.3 restent inchangés.
