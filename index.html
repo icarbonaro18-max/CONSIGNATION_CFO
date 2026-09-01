@@ -38,10 +38,14 @@
 <main class="container">
 <section class="panel"><div class="panel-head"><h2>1. Identification</h2></div><div class="panel-body">
 <div class="grid grid-4">
-<div class="field"><label>Date</label><input id="date" type="date"></div>
+<div class="field"><label>Date de consignation</label><input id="date" type="date"></div>
+<div class="field"><label>Heure de consignation</label><input id="heureConsignation" type="time"></div>
 <div class="field"><label>Référence</label><input id="reference" placeholder="CONS-2026-001"></div>
+<div class="field"><label>Domaine de tension</label><select id="domaineTension"><option>BT</option><option>HTA</option><option>Autre</option></select></div>
 <div class="field"><label>Chargé de travaux</label><input id="chargeTravaux" placeholder="Nom Prénom"></div>
 <div class="field"><label>Société</label><input id="societe" value="OPUS ELEC"></div>
+<div class="field"><label>Chargé d’exploitation / donneur d’ordre</label><input id="chargeExploitation" placeholder="Facultatif"></div>
+<div class="field"><label>Exploitation / service</label><input id="exploitation" placeholder="Ex. maintenance / site / agence"></div>
 </div>
 <div class="field" style="margin-top:12px"><label>Habilitation(s) du chargé de travaux</label><div class="habilitations">
 <label class="habilitation"><input type="checkbox" name="habilitation" value="B0">B0</label>
@@ -60,39 +64,158 @@
 <div class="field"><label>Travaux à exécuter</label><textarea id="travaux">CONSIGNATION D’UNE INSTALLATION ELECTRIQUE</textarea></div>
 <div class="field"><label>Installation / site</label><textarea id="installation" placeholder="Nom du site / bâtiment / zone"></textarea></div>
 <div class="field"><label>Adresse</label><textarea id="adresse"></textarea></div>
-<div class="field"><label>Chargé de consignation</label><input id="chargeConsignation" placeholder="Nom Prénom"></div>
+<div class="field"><label>Chargé de consignation = chargé de travaux ?</label>
+ <div class="choice-line">
+  <label class="choice"><input type="radio" name="sameConsignation" value="Oui">Oui</label>
+  <label class="choice"><input type="radio" name="sameConsignation" value="Non">Non</label>
+ </div>
 </div>
-<div class="field" style="margin-top:12px"><label>Périmètre consigné / description précise</label><textarea class="big" id="perimetre" placeholder="Ex. armoire générale de l'agence ; circuits concernés ; équipement remplacé par coffret provisoire, etc."></textarea></div>
+</div>
+
+<div id="chargeConsignationWrap" style="display:none;margin-top:12px">
+ <div class="grid grid-2">
+  <div class="field"><label>Nom du chargé de consignation</label><input id="chargeConsignation" placeholder="Nom Prénom"></div>
+  <div class="field"><label>Habilitation du chargé de consignation</label><select id="habilitationConsignation"><option>BC</option><option>HC</option><option>Autre</option></select></div>
+ </div>
+</div>
+<div id="sameConsignationHabilitation" class="notice" style="margin-top:12px">
+ <b>Habilitation consignation :</b> pour une consignation réalisée pour des tiers, vérifier que le chargé de consignation est habilité dans le domaine concerné (BC en BT / HC en HT).
+</div>
+
+<div style="margin-top:16px">
+ <div class="field"><label>Périmètre consigné</label>
+  <div class="choice-line">
+   <label class="choice"><input type="radio" name="perimetreMode" value="Tout l’établissement">Tout l’établissement</label>
+   <label class="choice"><input type="radio" name="perimetreMode" value="Intégralité de la surface">Intégralité de la surface</label>
+   <label class="choice"><input type="radio" name="perimetreMode" value="Surface partielle">Surface partielle</label>
+   <label class="choice"><input type="radio" name="perimetreMode" value="Circuits spécifiques">Circuits spécifiques</label>
+  </div>
+ </div>
+
+ <div id="surfacePartielleWrap" style="display:none;margin-top:12px">
+  <div class="field"><label>Zone / surface concernée</label><input id="surfacePartielle" placeholder="Ex. bureaux R+1 / chambre 102 / local technique"></div>
+ </div>
+
+ <div id="circuitsSpecifiquesWrap" style="display:none;margin-top:12px">
+  <div class="grid grid-2">
+   <div class="field"><label>Nombre de circuits spécifiques</label><input id="nbCircuitsSpecifiques" type="number" min="1" max="30" step="1" value="1"></div>
+   <div class="field"><label>Précision générale</label><input id="circuitsPrecision" placeholder="Facultatif"></div>
+  </div>
+  <div id="circuitsSpecifiquesList" style="margin-top:12px"></div>
+ </div>
+</div>
 </div></section>
 
-<section class="panel"><div class="panel-head"><h2>3. Étapes de consignation</h2></div><div class="panel-body">
-<div class="step"><div class="step-head">Séparation</div><div class="step-body"><div class="field"><label>Moyen de prévention réalisé</label><textarea id="separation" placeholder="Mise hors tension du circuit / séparation des circuits concernés..."></textarea></div></div></div>
-<div class="step"><div class="step-head">Condamnation</div><div class="step-body"><div class="field"><label>Moyen de prévention réalisé</label><textarea id="condamnation" placeholder="Condamnation de l'organe de séparation, cadenas, dispositif de verrouillage..."></textarea></div></div></div>
-<div class="step"><div class="step-head">Signalisation</div><div class="step-body"><div class="field"><label>Moyen de prévention réalisé</label><textarea id="signalisation" placeholder="Signalisation mise en place / RAS / accès interdit..."></textarea></div></div></div>
-<div class="step"><div class="step-head">Vérification</div><div class="step-body">
+<section class="panel"><div class="panel-head"><h2>3. Sources d’alimentation / réalimentation possibles</h2></div><div class="panel-body">
+<div class="small-note" style="margin-bottom:10px">Identifier les sources susceptibles d’alimenter ou de réalimenter la zone, y compris en aval.</div>
+<div class="choice-line">
+ <label class="choice"><input type="checkbox" name="sourceEnergie" value="Réseau principal">Réseau principal</label>
+ <label class="choice"><input type="checkbox" name="sourceEnergie" value="Groupe électrogène / source secourue">Groupe électrogène / source secourue</label>
+ <label class="choice"><input type="checkbox" name="sourceEnergie" value="Onduleur / UPS">Onduleur / UPS</label>
+ <label class="choice"><input type="checkbox" name="sourceEnergie" value="Photovoltaïque">Photovoltaïque</label>
+ <label class="choice"><input type="checkbox" name="sourceEnergie" value="Batteries">Batteries</label>
+ <label class="choice"><input type="checkbox" name="sourceEnergie" value="Réalimentation possible par l’aval">Réalimentation possible par l’aval</label>
+ <label class="choice"><input type="checkbox" name="sourceEnergie" value="Autre">Autre</label>
+</div>
+<div id="sourceAutreWrap" style="display:none;margin-top:10px"><div class="field"><label>Autre source / précision</label><input id="sourceAutre"></div></div>
+<div class="verify-row" style="margin-top:12px"><div><b>Toutes les sources amont / aval ont été identifiées et prises en compte</b></div><div class="yn"><label><input type="radio" name="sourcesIdentifiees" value="Oui">Oui</label><label><input type="radio" name="sourcesIdentifiees" value="Non">Non</label></div></div>
+</div></section>
+
+<section class="panel"><div class="panel-head"><h2>4. Étapes de consignation</h2></div><div class="panel-body">
+
+<div class="step"><div class="step-head">Séparation</div><div class="step-body">
+ <div class="small-note" style="margin-bottom:8px">Sélectionne un ou plusieurs moyens réalisés.</div>
+ <div class="choice-line">
+  <label class="choice"><input type="checkbox" name="separationChoice" value="Mise hors tension générale">Mise hors tension générale</label>
+  <label class="choice"><input type="checkbox" name="separationChoice" value="Mise hors tension des circuits concernés">Mise hors tension des circuits concernés</label>
+  <label class="choice"><input type="checkbox" name="separationChoice" value="Ouverture du disjoncteur / appareil de coupure">Ouverture du disjoncteur / appareil de coupure</label>
+  <label class="choice"><input type="checkbox" name="separationChoice" value="Déconnexion / séparation physique de l’alimentation">Déconnexion / séparation physique de l’alimentation</label>
+  <label class="choice"><input type="checkbox" name="separationChoice" value="Autre">Autre</label>
+ </div>
+ <div id="separationAutreWrap" style="display:none;margin-top:10px"><div class="field"><label>Autre moyen de séparation</label><input id="separationAutre"></div></div>
+ <div class="grid grid-2" style="margin-top:10px">
+  <div class="field"><label>Repère exact de l’organe / appareil de séparation</label><input id="repereSeparation" placeholder="Ex. QG1 / DJ-12 / sectionneur armoire TGBT"></div>
+  <div class="field"><label>Nombre d’organes de séparation</label><input id="nbOrganesSeparation" type="number" min="1" step="1" value="1"></div>
+ </div>
+</div></div>
+
+<div class="step"><div class="step-head">Condamnation</div><div class="step-body">
+ <div class="small-note" style="margin-bottom:8px">Sélectionne un ou plusieurs moyens réalisés.</div>
+ <div class="choice-line">
+  <label class="choice"><input type="checkbox" name="condamnationChoice" value="Condamnation par cadenas">Condamnation par cadenas</label>
+  <label class="choice"><input type="checkbox" name="condamnationChoice" value="Condamnation de l’appareil de coupure">Condamnation de l’appareil de coupure</label>
+  <label class="choice"><input type="checkbox" name="condamnationChoice" value="Bloque-disjoncteur / dispositif de verrouillage">Bloque-disjoncteur / dispositif de verrouillage</label>
+  <label class="choice"><input type="checkbox" name="condamnationChoice" value="Déconnexion physique sécurisée">Déconnexion physique sécurisée</label>
+  <label class="choice"><input type="checkbox" name="condamnationChoice" value="Autre">Autre</label>
+ </div>
+ <div id="condamnationAutreWrap" style="display:none;margin-top:10px"><div class="field"><label>Autre moyen de condamnation</label><input id="condamnationAutre"></div></div>
+ <div class="grid grid-2" style="margin-top:10px">
+  <div class="field"><label>Repère cadenas / dispositif de condamnation</label><input id="repereCondamnation" placeholder="Ex. cadenas n°03 / dispositif QG1"></div>
+  <div class="field"><label>Condamnation en position d’ouverture vérifiée</label><select id="condamnationVerifiee"><option>Oui</option><option>Non</option></select></div>
+ </div>
+</div></div>
+
+<div class="step"><div class="step-head">Signalisation de la condamnation</div><div class="step-body">
+ <div class="choice-line">
+  <label class="choice"><input type="checkbox" name="signalisationChoice" value="Pancarte « Condamné - Défense de manœuvrer »">Pancarte « Condamné - Défense de manœuvrer »</label>
+  <label class="choice"><input type="checkbox" name="signalisationChoice" value="Étiquette nominative / repère">Étiquette nominative / repère</label>
+  <label class="choice"><input type="checkbox" name="signalisationChoice" value="Balisage / accès interdit">Balisage / accès interdit</label>
+  <label class="choice"><input type="checkbox" name="signalisationChoice" value="Autre">Autre</label>
+ </div>
+ <div id="signalisationDetailWrap" style="display:none;margin-top:10px"><div class="field"><label>Autre signalisation / précision</label><input id="signalisationDetail"></div></div>
+</div></div>
+
+<div class="step"><div class="step-head">Identification de la partie consignée</div><div class="step-body">
+ <div class="small-note" style="margin-bottom:8px">L’identification doit permettre d’éviter toute confusion de circuit ou d’équipement.</div>
+ <div class="choice-line">
+  <label class="choice"><input type="checkbox" name="identificationChoice" value="Repérage tableau / armoire / équipement vérifié">Repérage tableau / armoire / équipement vérifié</label>
+  <label class="choice"><input type="checkbox" name="identificationChoice" value="Repérage circuit / départ vérifié">Repérage circuit / départ vérifié</label>
+  <label class="choice"><input type="checkbox" name="identificationChoice" value="Concordance schéma / plan / étiquetage vérifiée">Concordance schéma / plan / étiquetage vérifiée</label>
+  <label class="choice"><input type="checkbox" name="identificationChoice" value="Identification confirmée sur le lieu de travail">Identification confirmée sur le lieu de travail</label>
+  <label class="choice"><input type="checkbox" name="identificationChoice" value="Autre">Autre</label>
+ </div>
+ <div class="grid grid-2" style="margin-top:10px">
+  <div class="field"><label>Repère exact de la partie consignée</label><input id="reperePartieConsignee" placeholder="Ex. départ C12 / tableau TD-R+1 / armoire cuisine"></div>
+  <div class="field"><label>Autre précision d’identification</label><input id="identificationAutre"></div>
+ </div>
+</div></div>
+
+<div class="step"><div class="step-head">Vérification</div><div class="step-body"><div class="grid grid-3" style="margin-bottom:10px">
+ <div class="field"><label>VAT utilisé - marque / modèle</label><input id="vatAppareil" placeholder="Ex. Chauvin Arnoux / Fluke / ..."></div>
+ <div class="field"><label>N° / repère VAT</label><input id="vatNumero" placeholder="Facultatif"></div>
+ <div class="field"><label>VAT réalisée au lieu de travail</label><select id="vatLieuTravail"><option>Oui</option><option>Non</option></select></div>
+</div>
+<div class="verify-row"><div><b>VAT effectuée sur tous les conducteurs actifs, neutre compris</b></div><div class="yn"><label><input type="radio" name="vatTousConducteurs" value="Oui">Oui</label><label><input type="radio" name="vatTousConducteurs" value="Non">Non</label></div></div>
+
 <div class="verify-row"><div><b>Absence de tension entre phases</b></div><div class="yn"><label><input type="radio" name="vatPhases" value="Oui">Oui</label><label><input type="radio" name="vatPhases" value="Non">Non</label></div></div>
 <div class="verify-row"><div><b>Absence de tension phase / neutre</b></div><div class="yn"><label><input type="radio" name="vatPhaseNeutre" value="Oui">Oui</label><label><input type="radio" name="vatPhaseNeutre" value="Non">Non</label></div></div>
 <div class="verify-row"><div><b>Absence de tension phase / neutre et terre</b></div><div class="yn"><label><input type="radio" name="vatTerre" value="Oui">Oui</label><label><input type="radio" name="vatTerre" value="Non">Non</label></div></div>
-<div class="verify-row"><div><b>Mise à la terre du circuit</b></div><div class="yn"><label><input type="radio" name="miseTerre" value="Oui">Oui</label><label><input type="radio" name="miseTerre" value="Non">Non</label></div></div>
-<div class="verify-row"><div><b>Décharge des condensateurs</b></div><div class="yn"><label><input type="radio" name="decharge" value="Oui">Oui</label><label><input type="radio" name="decharge" value="Non">Non</label></div></div>
+<div class="field" style="margin-top:10px"><label>Mise à la terre et en court-circuit (MALT/CC)</label><select id="miseTerreMode"><option>Réalisée</option><option>Non requise en BT selon les conditions applicables</option><option>Non applicable</option></select></div>
+<div id="miseTerreDetailWrap" style="margin-top:8px"><div class="field"><label>Point de MALT/CC ou justification</label><input id="miseTerreDetail" placeholder="Point de pose / justification de non-réalisation"></div></div>
+<div class="field" style="margin-top:10px"><label>Énergies résiduelles / condensateurs</label><select id="dechargeMode"><option>Absentes / non applicables</option><option>Dissipation / décharge réalisée</option><option>Autre mesure de mise en sécurité</option></select></div>
+<div id="dechargeDetailWrap" style="margin-top:8px"><div class="field"><label>Précision</label><input id="dechargeDetail"></div></div>
 <div class="field" style="margin-top:12px"><label>Observation complémentaire sur la vérification</label><textarea id="verificationObs"></textarea></div>
 </div></div>
-</div></section>
 
-<section class="panel"><div class="panel-head"><h2>4. Délais / restitution</h2></div><div class="panel-body">
+</div></section>
+<section class="panel"><div class="panel-head"><h2>5. Délais / restitution</h2></div><div class="panel-body">
 <div class="grid grid-3">
 <div class="field"><label>Avis de fin de travail au plus tard le</label><input id="finDate" type="date"></div>
 <div class="field"><label>Heure limite</label><input id="finHeure" type="time"></div>
 <div class="field"><label>Délai de restitution en cas d'urgence</label><input id="restitution" placeholder="Ex. 1 h 30 min"></div>
+</div><div class="grid grid-3" style="margin-top:12px">
+<div class="field"><label>Attestation délivrée le</label><input id="delivranceDate" type="date"></div>
+<div class="field"><label>Heure de délivrance</label><input id="delivranceHeure" type="time"></div>
+<div class="field"><label>Remise au chargé de travaux</label><select id="attestationRemise"><option>Oui</option><option>Non</option></select></div>
 </div>
 </div></section>
 
-<section class="panel"><div class="panel-head"><h2>5. Photos de la consignation</h2><button class="btn btn-success" id="addPhotoBtn">+ Ajouter une photo</button></div><div class="panel-body">
+<section class="panel"><div class="panel-head"><h2>6. Photos de la consignation</h2><button class="btn btn-success" id="addPhotoBtn">+ Ajouter une photo</button></div><div class="panel-body">
 <div class="photo-list" id="photoList"></div>
 <div class="small-note">Facultatif : photos du dispositif de condamnation, de la signalisation, du tableau/armoire concerné ou du VAT.</div>
 </div></section>
 
-<section class="panel"><div class="panel-head"><h2>6. Signatures</h2></div><div class="panel-body">
+<section class="panel"><div class="panel-head"><h2>7. Signatures</h2></div><div class="panel-body">
 <div class="signature-grid">
 <div class="sig-card"><div class="grid grid-2"><div class="field"><label>Nom du chargé de travaux</label><input id="sigNomTravaux"></div><div class="field"><label>Date</label><input id="sigDateTravaux" type="date"></div></div><label class="small-note">Signature du chargé de travaux</label><canvas class="sig" id="sigTravaux"></canvas><div class="photo-actions"><button class="btn btn-ghost" id="clearSigTravaux">Effacer</button></div></div>
 <div class="sig-card"><div class="grid grid-2"><div class="field"><label>Nom du chargé de consignation</label><input id="sigNomConsignation"></div><div class="field"><label>Date</label><input id="sigDateConsignation" type="date"></div></div><label class="small-note">Signature du chargé de consignation</label><canvas class="sig" id="sigConsignation"></canvas><div class="photo-actions"><button class="btn btn-ghost" id="clearSigConsignation">Effacer</button></div></div>
@@ -118,13 +241,119 @@ function setRadio(name,v){if(v)document.querySelector(`input[name="${name}"][val
 function val(id){return $(id)?.value??'';}
 
 let sigTravauxData='',sigConsignationData='';
-let state={date:today(),reference:autoRef(),chargeTravaux:'',societe:'OPUS ELEC',habilitations:[],habilitationAutre:'',travaux:'CONSIGNATION D’UNE INSTALLATION ELECTRIQUE',installation:'',adresse:'',chargeConsignation:'',perimetre:'',separation:'',condamnation:'',signalisation:'',vatPhases:'',vatPhaseNeutre:'',vatTerre:'',miseTerre:'',decharge:'',verificationObs:'',finDate:today(),finHeure:'',restitution:'',photos:[],sigNomTravaux:'',sigDateTravaux:today(),sigNomConsignation:'',sigDateConsignation:today(),sigTravaux:'',sigConsignation:''};
-function blankState(){return {date:today(),reference:autoRef(),chargeTravaux:'',societe:'OPUS ELEC',habilitations:[],habilitationAutre:'',travaux:'CONSIGNATION D’UNE INSTALLATION ELECTRIQUE',installation:'',adresse:'',chargeConsignation:'',perimetre:'',separation:'',condamnation:'',signalisation:'',vatPhases:'',vatPhaseNeutre:'',vatTerre:'',miseTerre:'',decharge:'',verificationObs:'',finDate:today(),finHeure:'',restitution:'',photos:[],sigNomTravaux:'',sigDateTravaux:today(),sigNomConsignation:'',sigDateConsignation:today(),sigTravaux:'',sigConsignation:''};}
-function fixedFields(){return ['date','reference','chargeTravaux','societe','habilitationAutre','travaux','installation','adresse','chargeConsignation','perimetre','separation','condamnation','signalisation','verificationObs','finDate','finHeure','restitution','sigNomTravaux','sigDateTravaux','sigNomConsignation','sigDateConsignation'];}
-function collectState(){const s={...state};fixedFields().forEach(k=>s[k]=val(k));s.habilitations=selected('habilitation');s.vatPhases=radio('vatPhases');s.vatPhaseNeutre=radio('vatPhaseNeutre');s.vatTerre=radio('vatTerre');s.miseTerre=radio('miseTerre');s.decharge=radio('decharge');s.sigTravaux=sigTravauxData;s.sigConsignation=sigConsignationData;return s;}
-function applyState(s){state=JSON.parse(JSON.stringify(s||blankState()));fixedFields().forEach(k=>{if($(k))$(k).value=state[k]??'';});document.querySelectorAll('input[name="habilitation"]').forEach(x=>x.checked=(state.habilitations||[]).includes(x.value));['vatPhases','vatPhaseNeutre','vatTerre','miseTerre','decharge'].forEach(k=>setRadio(k,state[k]));state.photos=state.photos||[];sigTravauxData=state.sigTravaux||'';sigConsignationData=state.sigConsignation||'';renderPhotos();setTimeout(()=>{padTravaux.restore(sigTravauxData);padConsignation.restore(sigConsignationData);},120);}
+let state={date:today(),heureConsignation:'',reference:autoRef(),domaineTension:'BT',chargeTravaux:'',societe:'OPUS ELEC',chargeExploitation:'',exploitation:'',habilitations:[],habilitationAutre:'',travaux:'CONSIGNATION D’UNE INSTALLATION ELECTRIQUE',installation:'',adresse:'',sameConsignation:'Oui',chargeConsignation:'',habilitationConsignation:'BC',perimetreMode:'Tout l’établissement',surfacePartielle:'',nbCircuitsSpecifiques:1,circuitsPrecision:'',circuitsSpecifiques:[],sourcesEnergie:['Réseau principal'],sourceAutre:'',sourcesIdentifiees:'Oui',separationChoices:[],separationAutre:'',repereSeparation:'',nbOrganesSeparation:1,condamnationChoices:[],condamnationAutre:'',repereCondamnation:'',condamnationVerifiee:'Oui',signalisationChoices:[],signalisationDetail:'',identificationChoices:[],reperePartieConsignee:'',identificationAutre:'',vatAppareil:'',vatNumero:'',vatLieuTravail:'Oui',vatTousConducteurs:'',vatPhases:'',vatPhaseNeutre:'',vatTerre:'',miseTerreMode:'Non requise en BT selon les conditions applicables',miseTerreDetail:'',dechargeMode:'Absentes / non applicables',dechargeDetail:'',verificationObs:'',finDate:today(),finHeure:'',restitution:'',delivranceDate:today(),delivranceHeure:'',attestationRemise:'Oui',photos:[],sigNomTravaux:'',sigDateTravaux:today(),sigNomConsignation:'',sigDateConsignation:today(),sigTravaux:'',sigConsignation:''};
+function blankState(){return {date:today(),heureConsignation:'',reference:autoRef(),domaineTension:'BT',chargeTravaux:'',societe:'OPUS ELEC',chargeExploitation:'',exploitation:'',habilitations:[],habilitationAutre:'',travaux:'CONSIGNATION D’UNE INSTALLATION ELECTRIQUE',installation:'',adresse:'',sameConsignation:'Oui',chargeConsignation:'',habilitationConsignation:'BC',perimetreMode:'Tout l’établissement',surfacePartielle:'',nbCircuitsSpecifiques:1,circuitsPrecision:'',circuitsSpecifiques:[],sourcesEnergie:['Réseau principal'],sourceAutre:'',sourcesIdentifiees:'Oui',separationChoices:[],separationAutre:'',repereSeparation:'',nbOrganesSeparation:1,condamnationChoices:[],condamnationAutre:'',repereCondamnation:'',condamnationVerifiee:'Oui',signalisationChoices:[],signalisationDetail:'',identificationChoices:[],reperePartieConsignee:'',identificationAutre:'',vatAppareil:'',vatNumero:'',vatLieuTravail:'Oui',vatTousConducteurs:'',vatPhases:'',vatPhaseNeutre:'',vatTerre:'',miseTerreMode:'Non requise en BT selon les conditions applicables',miseTerreDetail:'',dechargeMode:'Absentes / non applicables',dechargeDetail:'',verificationObs:'',finDate:today(),finHeure:'',restitution:'',delivranceDate:today(),delivranceHeure:'',attestationRemise:'Oui',photos:[],sigNomTravaux:'',sigDateTravaux:today(),sigNomConsignation:'',sigDateConsignation:today(),sigTravaux:'',sigConsignation:''};}
+function fixedFields(){return ['date','heureConsignation','reference','domaineTension','chargeTravaux','societe','chargeExploitation','exploitation','habilitationAutre','travaux','installation','adresse','chargeConsignation','habilitationConsignation','surfacePartielle','nbCircuitsSpecifiques','circuitsPrecision','sourceAutre','repereSeparation','nbOrganesSeparation','separationAutre','condamnationAutre','repereCondamnation','condamnationVerifiee','signalisationDetail','reperePartieConsignee','identificationAutre','vatAppareil','vatNumero','vatLieuTravail','miseTerreMode','miseTerreDetail','dechargeMode','dechargeDetail','verificationObs','finDate','finHeure','restitution','delivranceDate','delivranceHeure','attestationRemise','sigNomTravaux','sigDateTravaux','sigNomConsignation','sigDateConsignation'];}
+function collectState(){
+ const s={...state};
+ fixedFields().forEach(k=>s[k]=val(k));
+ s.habilitations=selected('habilitation');
+ s.sameConsignation=radio('sameConsignation')||'Oui';
+ s.perimetreMode=radio('perimetreMode')||'Tout l’établissement';
+ s.sourcesEnergie=selected('sourceEnergie');
+ s.sourcesIdentifiees=radio('sourcesIdentifiees')||'';
+ s.separationChoices=selected('separationChoice');
+ s.condamnationChoices=selected('condamnationChoice');
+ s.signalisationChoices=selected('signalisationChoice');
+ s.identificationChoices=selected('identificationChoice');
+ s.circuitsSpecifiques=state.circuitsSpecifiques||[];
+ s.vatTousConducteurs=radio('vatTousConducteurs')||'';
+ s.vatPhases=radio('vatPhases');s.vatPhaseNeutre=radio('vatPhaseNeutre');s.vatTerre=radio('vatTerre');
+ s.sigTravaux=sigTravauxData;s.sigConsignation=sigConsignationData;
+ if(s.sameConsignation==='Oui'){s.chargeConsignation=s.chargeTravaux;s.sigNomConsignation=s.sigNomTravaux||s.chargeTravaux;}
+ return s;
+}
+function migrateState(s){
+ s=s||{};
+ const n={...blankState(),...s};
+ if(s.perimetre && !s.perimetreMode){n.perimetreMode='Surface partielle';n.surfacePartielle=s.perimetre;}
+ if(s.separation && !(s.separationChoices||[]).length){n.separationChoices=['Autre'];n.separationAutre=s.separation;}
+ if(s.condamnation && !(s.condamnationChoices||[]).length){n.condamnationChoices=['Autre'];n.condamnationAutre=s.condamnation;}
+ if(s.signalisationMode && !(s.signalisationChoices||[]).length){
+   if(s.signalisationMode==='Oui')n.signalisationChoices=['Autre'];
+   if(s.signalisationDetail)n.signalisationDetail=s.signalisationDetail;
+ }
+ if(!s.sameConsignation && s.chargeTravaux && s.chargeConsignation && s.chargeTravaux===s.chargeConsignation)n.sameConsignation='Oui';
+ if(s.miseTerre==='Oui')n.miseTerreMode='Réalisée';
+ if(s.miseTerre==='Non')n.miseTerreMode='Non requise en BT selon les conditions applicables';
+ if(s.decharge==='Oui')n.dechargeMode='Dissipation / décharge réalisée';
+ if(s.decharge==='Non')n.dechargeMode='Absentes / non applicables';
+ return n;
+}
+function applyState(s){
+ state=migrateState(s);
+ fixedFields().forEach(k=>{if($(k))$(k).value=state[k]??'';});
+ document.querySelectorAll('input[name="habilitation"]').forEach(x=>x.checked=(state.habilitations||[]).includes(x.value));
+ setRadio('sameConsignation',state.sameConsignation||'Oui');setRadio('perimetreMode',state.perimetreMode||'Tout l’établissement');
+ document.querySelectorAll('input[name="sourceEnergie"]').forEach(x=>x.checked=(state.sourcesEnergie||[]).includes(x.value));
+ setRadio('sourcesIdentifiees',state.sourcesIdentifiees||'');
+ document.querySelectorAll('input[name="separationChoice"]').forEach(x=>x.checked=(state.separationChoices||[]).includes(x.value));
+ document.querySelectorAll('input[name="condamnationChoice"]').forEach(x=>x.checked=(state.condamnationChoices||[]).includes(x.value));
+ document.querySelectorAll('input[name="signalisationChoice"]').forEach(x=>x.checked=(state.signalisationChoices||[]).includes(x.value));
+ document.querySelectorAll('input[name="identificationChoice"]').forEach(x=>x.checked=(state.identificationChoices||[]).includes(x.value));
+ ['vatTousConducteurs','vatPhases','vatPhaseNeutre','vatTerre'].forEach(k=>setRadio(k,state[k]));
+ state.circuitsSpecifiques=Array.isArray(state.circuitsSpecifiques)?state.circuitsSpecifiques:[];
+ state.photos=state.photos||[];sigTravauxData=state.sigTravaux||'';sigConsignationData=state.sigConsignation||'';
+ updateSameConsignation();updatePerimetre();renderCircuits();updateSourceAutre();updateSeparationAutre();updateCondamnationAutre();updateSignalisation();
+ renderPhotos();setTimeout(()=>{padTravaux.restore(sigTravauxData);padConsignation.restore(sigConsignationData);},120);
+}
 function scheduleSave(){clearTimeout(window.__saveTimer);$('saveStatus').textContent='Enregistrement...';window.__saveTimer=setTimeout(()=>pmFlush().catch(()=>{}),600);}
 document.addEventListener('input',e=>{if(e.target.closest('main'))scheduleSave();});document.addEventListener('change',e=>{if(e.target.closest('main'))scheduleSave();});
+
+
+function updateSameConsignation(){
+ const same=radio('sameConsignation')||'Oui';
+ $('chargeConsignationWrap').style.display=same==='Oui'?'none':'block';
+ if(same==='Oui'){
+   $('chargeConsignation').value=val('chargeTravaux');
+   $('sigNomConsignation').value=val('sigNomTravaux')||val('chargeTravaux');
+ }
+}
+function updatePerimetre(){
+ const mode=radio('perimetreMode')||'Tout l’établissement';
+ $('surfacePartielleWrap').style.display=mode==='Surface partielle'?'block':'none';
+ $('circuitsSpecifiquesWrap').style.display=mode==='Circuits spécifiques'?'block':'none';
+}
+function renderCircuits(){
+ const n=Math.max(1,Math.min(30,parseInt(val('nbCircuitsSpecifiques')||'1',10)||1));
+ while(state.circuitsSpecifiques.length<n)state.circuitsSpecifiques.push({emplacement:'',designation:''});
+ if(state.circuitsSpecifiques.length>n)state.circuitsSpecifiques=state.circuitsSpecifiques.slice(0,n);
+ const c=$('circuitsSpecifiquesList');
+ if(!c)return;
+ c.innerHTML=state.circuitsSpecifiques.map((x,i)=>`<div class="step" data-circuit="${i}"><div class="step-head">Circuit spécifique ${i+1}</div><div class="step-body"><div class="grid grid-2"><div class="field"><label>Emplacement / local / pièce</label><input data-k="emplacement" placeholder="Ex. chambre, bureau, salle de bain, local technique"></div><div class="field"><label>Désignation du circuit</label><input data-k="designation" placeholder="Ex. prises, éclairage, chauffe-eau..."></div></div></div></div>`).join('');
+ c.querySelectorAll('[data-circuit]').forEach(card=>{
+   const i=+card.dataset.circuit;
+   card.querySelectorAll('[data-k]').forEach(el=>{
+     el.value=state.circuitsSpecifiques[i]?.[el.dataset.k]||'';
+     el.addEventListener('input',()=>{state.circuitsSpecifiques[i][el.dataset.k]=el.value;scheduleSave();});
+   });
+ });
+}
+function updateSeparationAutre(){
+ const on=selected('separationChoice').includes('Autre');
+ $('separationAutreWrap').style.display=on?'block':'none';
+}
+function updateCondamnationAutre(){
+ const on=selected('condamnationChoice').includes('Autre');
+ $('condamnationAutreWrap').style.display=on?'block':'none';
+}
+function updateSignalisation(){
+ const show=selected('signalisationChoice').includes('Autre');
+ $('signalisationDetailWrap').style.display=show?'block':'none';
+}
+function updateSourceAutre(){
+ const show=selected('sourceEnergie').includes('Autre');
+ $('sourceAutreWrap').style.display=show?'block':'none';
+}
+document.querySelectorAll('input[name="sameConsignation"]').forEach(x=>x.addEventListener('change',()=>{updateSameConsignation();scheduleSave();}));
+document.querySelectorAll('input[name="perimetreMode"]').forEach(x=>x.addEventListener('change',()=>{updatePerimetre();scheduleSave();}));
+$('nbCircuitsSpecifiques').addEventListener('input',()=>{renderCircuits();scheduleSave();});
+document.querySelectorAll('input[name="separationChoice"]').forEach(x=>x.addEventListener('change',()=>{updateSeparationAutre();scheduleSave();}));
+document.querySelectorAll('input[name="condamnationChoice"]').forEach(x=>x.addEventListener('change',()=>{updateCondamnationAutre();scheduleSave();}));
+document.querySelectorAll('input[name="signalisationChoice"]').forEach(x=>x.addEventListener('change',()=>{updateSignalisation();scheduleSave();}));
+document.querySelectorAll('input[name="sourceEnergie"]').forEach(x=>x.addEventListener('change',()=>{updateSourceAutre();scheduleSave();}));
+$('chargeTravaux').addEventListener('input',()=>{if((radio('sameConsignation')||'Oui')==='Oui'){$('chargeConsignation').value=val('chargeTravaux');if(!$('sigNomTravaux').value)$('sigNomTravaux').value=val('chargeTravaux');$('sigNomConsignation').value=$('sigNomTravaux').value||val('chargeTravaux');}});
+$('sigNomTravaux').addEventListener('input',()=>{if((radio('sameConsignation')||'Oui')==='Oui')$('sigNomConsignation').value=val('sigNomTravaux');});
 
 async function compressImage(file,maxW=1600,maxH=1200,quality=.8){const data=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file);});const im=await new Promise((res,rej)=>{const x=new Image();x.onload=()=>res(x);x.onerror=rej;x.src=data;});let w=im.naturalWidth,h=im.naturalHeight;const sc=Math.min(1,maxW/w,maxH/h);w=Math.max(1,Math.round(w*sc));h=Math.max(1,Math.round(h*sc));const cv=document.createElement('canvas');cv.width=w;cv.height=h;const ctx=cv.getContext('2d',{alpha:false});ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);ctx.drawImage(im,0,0,w,h);return cv.toDataURL('image/jpeg',quality);}
 function renderPhotos(){const c=$('photoList');if(!state.photos.length){c.innerHTML='<div class="small-note">Aucune photo ajoutée.</div>';return;}c.innerHTML=state.photos.map((p,i)=>`<div class="photo-card" data-photo="${i}"><div class="photo-box"><img data-preview><div class="photo-empty">Photo consignation ${i+1}</div></div><div class="photo-body"><div class="field"><label>Commentaire</label><input data-caption placeholder="Ex. cadenas armoire générale / VAT / signalisation"></div><div class="photo-actions"><label class="camera-label">Prendre / choisir photo<input type="file" accept="image/*" capture="environment" data-file></label><button class="btn btn-danger" data-remove>Supprimer</button></div></div></div>`).join('');c.querySelectorAll('[data-photo]').forEach(card=>{const i=+card.dataset.photo,p=state.photos[i],img=card.querySelector('[data-preview]'),empty=card.querySelector('.photo-empty');if(p.data){img.src=p.data;img.style.display='block';empty.style.display='none';}card.querySelector('[data-caption]').value=p.caption||'';card.querySelector('[data-caption]').addEventListener('input',e=>{p.caption=e.target.value;scheduleSave();});card.querySelector('[data-file]').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;p.data=await compressImage(f);renderPhotos();scheduleSave();});card.querySelector('[data-remove]').addEventListener('click',()=>{state.photos.splice(i,1);renderPhotos();scheduleSave();});});}
@@ -319,16 +548,57 @@ function pdfFooter(page,suffix=''){page.line(10,196.5,287,196.5,[185,195,205],.2
 function pdfSectionTitle(page,text,y){page.rect(10,y,277,7,{fill:[11,74,139],stroke:[11,74,139]});page.text(text,13,y+1.8,{size:8,bold:true,color:[255,255,255]});return y+9;}
 function pdfFieldLine(page,label,value,x,y,w,maxLines=2){page.text(label,x,y,{size:6.2,bold:true,color:[85,95,105],maxWidth:w,maxLines:1});page.text(value||'-',x,y+4,{size:7,color:[20,30,40],maxWidth:w,maxLines,lineHeight:3.5});}
 function yn(v){return v||'Non renseigné';}
+function perimetreText(s){
+ const mode=s.perimetreMode||'Tout l’établissement';
+ if(mode==='Surface partielle')return `${mode}${s.surfacePartielle?' : '+s.surfacePartielle:''}`;
+ if(mode==='Circuits spécifiques'){
+   const list=(s.circuitsSpecifiques||[]).map((c,i)=>`${i+1}. ${c.emplacement||'Emplacement non précisé'}${c.designation?' - '+c.designation:''}`);
+   return `${mode} (${list.length})${s.circuitsPrecision?' - '+s.circuitsPrecision:''}\n${list.join('\n')}`;
+ }
+ return mode;
+}
+function choiceText(items,other){
+ const arr=[...(items||[]).filter(x=>x!=='Autre')];
+ if((items||[]).includes('Autre')&&other)arr.push(other);
+ return arr.length?arr.join(' ; '):'Non renseigné';
+}
+function signalisationText(s){return choiceText(s.signalisationChoices,s.signalisationDetail);}
+function sourcesText(s){return choiceText(s.sourcesEnergie,s.sourceAutre);}
+function identificationText(s){
+ const base=choiceText(s.identificationChoices,s.identificationAutre);
+ return `${base}${s.reperePartieConsignee?' ; Repère : '+s.reperePartieConsignee:''}`;
+}
+function maltText(s){return `${s.miseTerreMode||'-'}${s.miseTerreDetail?' - '+s.miseTerreDetail:''}`;}
+function dechargeText(s){return `${s.dechargeMode||'-'}${s.dechargeDetail?' - '+s.dechargeDetail:''}`;}
+
+
 async function buildPdf(s){
  const doc=new OpusPdfDocument();const logo=await pdfPrepareJpeg(OPUS_LOGO,{maxW:900,maxH:300,quality:.9}).catch(()=>null);let page=new OpusPdfPage(doc);
  await pdfHeaderSimple(page,'ATTESTATION DE CONSIGNATION D’UNE INSTALLATION ÉLECTRIQUE',s.installation||'',logo);
- let y=30;pdfFieldLine(page,'Date',s.date,10,y,25,1);pdfFieldLine(page,'Référence',s.reference,39,y,40,1);pdfFieldLine(page,'Chargé de travaux',s.chargeTravaux,83,y,58,1);pdfFieldLine(page,'Société',s.societe,145,y,40,1);pdfFieldLine(page,'Habilitation(s)',[...(s.habilitations||[]),s.habilitationAutre||''].filter(Boolean).join(' - '),189,y,98,2);
- y=45;y=pdfSectionTitle(page,'TRAVAUX / INSTALLATION CONCERNÉE',y);pdfFieldLine(page,'Travaux à exécuter',s.travaux,13,y,126,5);pdfFieldLine(page,'Installation / site',s.installation,145,y,139,4);y+=24;pdfFieldLine(page,'Adresse',s.adresse,145,y,139,3);pdfFieldLine(page,'Chargé de consignation',s.chargeConsignation,13,y,126,2);y+=18;page.text('Périmètre consigné / description',13,y,{size:6.3,bold:true,color:[85,95,105]});page.text(s.perimetre||'-',13,y+4,{size:7,maxWidth:271,maxLines:7,lineHeight:3.6});y+=34;
- y=pdfSectionTitle(page,'ÉTAPES DE CONSIGNATION',y);
- const steps=[['Séparation',s.separation],['Condamnation',s.condamnation],['Signalisation',s.signalisation]];
+ let y=30;pdfFieldLine(page,'Date / heure',`${s.date||'-'}${s.heureConsignation?' '+s.heureConsignation:''}`,10,y,38,1);pdfFieldLine(page,'Référence',s.reference,52,y,38,1);pdfFieldLine(page,'Domaine',s.domaineTension,94,y,25,1);pdfFieldLine(page,'Chargé de travaux',s.chargeTravaux,123,y,58,1);pdfFieldLine(page,'Habilitation(s)',[...(s.habilitations||[]),s.habilitationAutre||''].filter(Boolean).join(' - '),185,y,102,2);
+ y=45;y=pdfSectionTitle(page,'TRAVAUX / INSTALLATION CONCERNÉE',y);pdfFieldLine(page,'Travaux à exécuter',s.travaux,13,y,126,5);pdfFieldLine(page,'Installation / site',s.installation,145,y,139,4);y+=24;pdfFieldLine(page,'Adresse',s.adresse,145,y,139,3);pdfFieldLine(page,'Chargé de consignation',`${s.chargeConsignation||'-'}${s.habilitationConsignation?' ('+s.habilitationConsignation+')':''}`,13,y,126,2);y+=18;page.text('Périmètre consigné / description',13,y,{size:6.3,bold:true,color:[85,95,105]});page.text(perimetreText(s)||'-',13,y+4,{size:7,maxWidth:271,maxLines:8,lineHeight:3.6});y+=34;
+ y=pdfSectionTitle(page,'SOURCES D’ALIMENTATION / RÉALIMENTATION',y);
+page.text(sourcesText(s),13,y,{size:6.7,maxWidth:225,maxLines:3,lineHeight:3.3});
+page.text(`Toutes sources prises en compte : ${s.sourcesIdentifiees||'NR'}`,284,y,{size:6.3,bold:true,align:'right',maxWidth:55,maxLines:2});
+y+=15;
+y=pdfSectionTitle(page,'ÉTAPES DE CONSIGNATION',y);
+ const steps=[
+ ['Séparation',`${choiceText(s.separationChoices,s.separationAutre)}${s.repereSeparation?' ; Repère : '+s.repereSeparation:''}`],
+ ['Condamnation',`${choiceText(s.condamnationChoices,s.condamnationAutre)}${s.repereCondamnation?' ; Repère : '+s.repereCondamnation:''}`],
+ ['Signalisation',signalisationText(s)],
+ ['Identification',identificationText(s)]
+];
  for(const [a,b] of steps){page.rect(10,y,277,12,{fill:[248,250,252],stroke:[205,214,222]});page.text(a,13,y+2,{size:7,bold:true,maxWidth:36,maxLines:1});page.text(b||'-',52,y+2,{size:6.7,maxWidth:232,maxLines:2,lineHeight:3.2});y+=12;}
- page.rect(10,y,277,38,{fill:[255,255,255],stroke:[205,214,222]});page.text('Vérification',13,y+2,{size:7,bold:true});const checks=[['Absence de tension entre phases',s.vatPhases],['Absence de tension phase / neutre',s.vatPhaseNeutre],['Absence de tension phase/neutre et terre',s.vatTerre],['Mise à la terre du circuit',s.miseTerre],['Décharge des condensateurs',s.decharge]];let cy=y+2;for(const [l,v] of checks){page.text(l,52,cy,{size:6.5,maxWidth:155,maxLines:1});page.text(yn(v),284,cy,{size:6.5,bold:true,align:'right',maxWidth:70,maxLines:1});cy+=6;}y+=40;
- y=pdfSectionTitle(page,'DÉLAIS / RESTITUTION',y);pdfFieldLine(page,'Avis de fin de travail au plus tard le',`${s.finDate||'-'}${s.finHeure?' à '+s.finHeure:''}`,13,y,145,2);pdfFieldLine(page,'Délai de restitution en cas d’urgence',s.restitution,164,y,120,2);y+=18;
+ page.rect(10,y,277,56,{fill:[255,255,255],stroke:[205,214,222]});page.text('Vérification / VAT',13,y+2,{size:7,bold:true});page.text(`${s.vatAppareil||'VAT'}${s.vatNumero?' - '+s.vatNumero:''}`,13,y+8,{size:5.8,maxWidth:35,maxLines:3});const checks=[
+ ['VAT au lieu de travail',s.vatLieuTravail],
+ ['Tous conducteurs actifs / neutre',s.vatTousConducteurs],
+ ['Absence tension entre phases',s.vatPhases],
+ ['Absence tension phase / neutre',s.vatPhaseNeutre],
+ ['Absence tension phase/neutre et terre',s.vatTerre],
+ ['MALT / CC',maltText(s)],
+ ['Énergies résiduelles',dechargeText(s)]
+];let cy=y+2;for(const [l,v] of checks){page.text(l,52,cy,{size:6.5,maxWidth:155,maxLines:1});page.text(yn(v),284,cy,{size:6.5,bold:true,align:'right',maxWidth:70,maxLines:1});cy+=6;}y+=58;
+ y=pdfSectionTitle(page,'DÉLAIS / RESTITUTION',y);pdfFieldLine(page,'Avis de fin de travail au plus tard le',`${s.finDate||'-'}${s.finHeure?' à '+s.finHeure:''}`,13,y,100,2);pdfFieldLine(page,'Délai urgence',s.restitution,117,y,52,2);pdfFieldLine(page,'Attestation délivrée',`${s.delivranceDate||'-'}${s.delivranceHeure?' '+s.delivranceHeure:''}`,173,y,72,2);pdfFieldLine(page,'Remise CT',s.attestationRemise,249,y,35,1);y+=18;
  page.rect(10,y,277,23,{fill:[255,248,223],stroke:[226,207,143]});page.text('Le chargé de travaux doit considérer comme étant sous tension tout ouvrage électrique autre que ceux dont la consignation lui est certifiée par la présente attestation ou par d’autres attestations en sa possession. Il ne pourra travailler qu’après avoir pris les mesures de sécurité qui lui incombent.',13,y+3,{size:6.1,color:[85,70,16],maxWidth:271,maxLines:4,lineHeight:3.2});
  pdfFooter(page,'Page 1');doc.addPage(page);
 
