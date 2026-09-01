@@ -1,34 +1,20 @@
-OPUS ELEC - CONSIGNATION ÉLECTRIQUE v1.2 - VERSION RENFORCÉE CONTRÔLE
+OPUS ELEC - CONSIGNATION ÉLECTRIQUE v1.3 - CORRECTION CACHE TABLETTE
 
-Évolutions destinées à améliorer la traçabilité pour les chantiers importants et les contrôles externes :
+Pourquoi la tablette affichait encore l'ancienne version :
+- le raccourci Chrome ouvrait l'URL racine ;
+- l'ancien service worker pouvait renvoyer l'ancien index.html depuis son cache.
 
-- date + heure de consignation ;
-- domaine de tension BT / HTA ;
-- chargé d'exploitation / donneur d'ordre ;
-- exploitation / service ;
-- habilitation du chargé de consignation ;
-- identification des sources de réalimentation possibles :
-  réseau principal, groupe, UPS, photovoltaïque, batteries, aval, etc. ;
-- confirmation que toutes les sources amont / aval ont été prises en compte ;
-- repère exact de l'organe de séparation ;
-- repère du cadenas / dispositif de condamnation ;
-- signalisation de condamnation détaillée ;
-- étape IDENTIFICATION ajoutée explicitement ;
-- repère exact de la partie consignée ;
-- identification du VAT utilisé ;
-- confirmation VAT au lieu de travail ;
-- confirmation VAT sur tous les conducteurs actifs, neutre compris ;
-- MALT / court-circuit : réalisée / non requise en BT selon conditions / non applicable ;
-- gestion des énergies résiduelles ;
-- date et heure de délivrance de l'attestation ;
-- confirmation de remise au chargé de travaux.
+Correction :
+- start_url versionnée ;
+- navigation en mode NETWORK FIRST ;
+- à chaque ouverture, l'application tente d'abord de récupérer la dernière version GitHub ;
+- si le réseau est absent, elle utilise la dernière copie disponible hors ligne ;
+- les dossiers locaux IndexedDB ne sont pas supprimés.
 
-Références de conception :
-- Code du travail R4544-9 et R4544-10 ;
-- NF C 18-510 COMPIL 2 (juin 2023) ;
-- INRS ED 6109.
-
-IMPORTANT :
-L'application facilite la traçabilité documentaire. Elle ne décide pas à la place du chargé de consignation
-si une étape est requise ou non dans une situation donnée, et ne remplace ni l'analyse de risque, ni le titre
-d'habilitation, ni les prescriptions applicables à l'installation.
+APRÈS MISE À JOUR GITHUB :
+1. Remplacer tous les fichiers par ceux de ce ZIP.
+2. Attendre le déploiement GitHub Pages.
+3. Ouvrir dans Chrome l'URL de l'application avec ?app=consignation-v13.
+4. Vérifier la mention v1.3 dans le sous-titre.
+5. Supprimer l'ancien raccourci de l'écran d'accueil.
+6. Depuis la page v1.3, refaire Ajouter à l'écran d'accueil / Installer.
